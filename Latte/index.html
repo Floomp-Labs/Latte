@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$LATTE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Montserrat:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #3e2723;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .latte-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #8d6e63 100%);
+            opacity: 0.8;
+        }
+
+        .latte-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M30,10 Q50,0 70,10 T90,30 T70,50 T30,70 T10,50 T30,30 T50,10" fill="none" stroke="rgba(255,235,205,0.2)" stroke-width="2"/></svg>');
+            background-size: 400px 400px;
+            animation: latte-swirl 15s linear infinite;
+        }
+
+        .latte-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .latte-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(210,180,140,0.6));
+            border-radius: 0 0 5px 5px;
+            animation: latte-fall linear infinite;
+        }
+
+        .latte-ripple {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(210,180,140,0.6);
+            border-radius: 50%;
+            animation: ripple-expand 2s linear infinite;
+            opacity: 0;
+        }
+
+        /* Cream Swirls */
+        .cream-swirl {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255,248,220,0.3);
+            border: 1px solid rgba(255,248,220,0.5);
+            border-radius: 50%;
+            box-shadow: 
+                inset 0 0 10px rgba(255,248,220,0.8),
+                0 0 15px rgba(255,248,220,0.5);
+            animation: cream-fall linear infinite;
+            opacity: 0.4;
+        }
+
+        /* Bubbles */
+        .bubble {
+            position: absolute;
+            bottom: -20px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(210,180,140,0.4));
+            border-radius: 50%;
+            animation: bubble-rise linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes latte-swirl {
+            0% { background-position: 0 0; }
+            100% { background-position: 400px 400px; }
+        }
+
+        @keyframes latte-fall {
+            0% { transform: translateY(-100px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(calc(100vh + 100px)); opacity: 0; }
+        }
+
+        @keyframes ripple-expand {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(10); opacity: 0; }
+        }
+
+        @keyframes cream-fall {
+            0% { 
+                transform: translateY(-50px) rotate(0deg); 
+                opacity: 0.4;
+            }
+            100% { 
+                transform: translateY(calc(100vh + 50px)) rotate(360deg); 
+                opacity: 0;
+            }
+        }
+
+        @keyframes bubble-rise {
+            0% { transform: translateY(0) scale(1); opacity: 0.6; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Website content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            padding: 30px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 32px;
+            font-weight: bold;
+            font-family: 'Pacifico', cursive;
+            color: #d7ccc8;
+            text-shadow: 0 0 10px rgba(210,180,140,0.5), 2px 2px 3px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 32px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav ul li a:hover {
+            color: #d7ccc8;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #d7ccc8;
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 70px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #d7ccc8, #a1887f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(210,180,140,0.3);
+            line-height: 1.2;
+            letter-spacing: 1px;
+            position: relative;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(215,204,200,0), rgba(215,204,200,1), rgba(215,204,200,0));
+        }
+
+        .hero p {
+            font-size: 22px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.8;
+            font-weight: 400;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #d7ccc8, #a1887f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #d7ccc8, #a1887f);
+            color: white;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid #d7ccc8;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(210,180,140,0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #efebe9, #bcaaa4);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(215,204,200,0.1);
+        }
+
+        .crypto-stats, .latte-facts {
+            display: flex;
+            justify-content: space-between;
+            padding: 50px 0;
+            flex-wrap: wrap;
+        }
+        
+        .latte-facts .stat-card:hover {
+            border-color: rgba(210,180,140,0.5);
+            background: rgba(222,184,135,0.1);
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            width: calc(25% - 20px);
+            min-width: 220px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(210,180,140,0.5);
+        }
+
+        .stat-card h3 {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #d7ccc8;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .positive {
+            color: #d7ccc8;
+        }
+
+        .negative {
+            color: #ff6666;
+        }
+
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+        }
+
+        .feature-card {
+            background: rgba(93,64,55,0.6);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(210,180,140,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #d7ccc8;
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #d7ccc8;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 50px;
+            }
+            
+            .hero h1::after {
+                width: 100px;
+                bottom: -10px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .latte-facts {
+                justify-content: center;
+                gap: 20px;
+            }
+            
+            .stat-card {
+                width: calc(50% - 20px);
+                min-width: 200px;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-gap: 20px;
+            }
+            
+            .feature-card {
+                padding: 20px 15px;
+            }
+            
+            .feature-card h3 {
+                font-size: 20px;
+            }
+            
+            .feature-card p {
+                font-size: 14px;
+            }
+            
+            nav {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-card {
+                aspect-ratio: auto;
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="latte-background"></div>
+        <div class="latte-overlay"></div>
+        <div class="latte-rain" id="latte-rain"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">☕</span> $LATTE
+            </div>
+        </header>
+
+        <section class="hero">
+            <h1>The Comforting Power of $LATTE</h1>
+            <p>$LATTE is a rich memecoin inspired by the creamy, caffeine-infused coffee that has been bringing people together for generations. Experience the perfect coffee blend.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">CA</a>
+                <a href="x.com" class="btn btn-secondary">Twitter</a>
+            </div>
+        </section>
+
+        <section class="crypto-stats latte-facts">
+            <div class="stat-card">
+                <h3>Caffeine Power</h3>
+                <div class="value">95mg</div>
+                <div class="change">Perfect balance for productivity</div>
+            </div>
+            <div class="stat-card">
+                <h3>Creaminess Factor</h3>
+                <div class="value">10/10</div>
+                <div class="change">Smooth experience in every sip</div>
+            </div>
+            <div class="stat-card">
+                <h3>Tradition</h3>
+                <div class="value">400+</div>
+                <div class="change">Years of coffee culture worldwide</div>
+            </div>
+            <div class="stat-card">
+                <h3>Comfort Level</h3>
+                <div class="value">∞</div>
+                <div class="change">Unlimited cozy vibes in every cup</div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2 class="section-title">Why $LATTE Enriches Your Portfolio</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">☕</div>
+                    <h3>Rich Returns</h3>
+                    <p>Just like latte warms your day, $LATTE aims to enrich your portfolio with its unique tokenomics and growing community.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧋</div>
+                    <h3>Smooth Growth</h3>
+                    <p>Our community-driven approach ensures creamy, sustainable growth without artificial pumps, just like the natural goodness of a perfect latte.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Create latte raindrops
+        function createLatteRain() {
+            const rainContainer = document.getElementById('latte-rain');
+            const numberOfDrops = window.innerWidth / 5;
+            
+            for (let i = 0; i < numberOfDrops; i++) {
+                // Create raindrop
+                const drop = document.createElement('div');
+                drop.classList.add('latte-drop');
+                
+                // Random positions and speeds
+                const leftPos = Math.random() * 100;
+                const delay = Math.random() * 10;
+                const duration = Math.random() * 1 + 1; // 1-2 seconds
+                
+                drop.style.left = `${leftPos}%`;
+                drop.style.animationDelay = `${delay}s`;
+                drop.style.animationDuration = `${duration}s`;
+                
+                rainContainer.appendChild(drop);
+                
+                // Create ripple at the bottom
+                setTimeout(() => {
+                    if (document.body.contains(drop)) {
+                        const ripple = document.createElement('div');
+                        ripple.classList.add('latte-ripple');
+                        ripple.style.left = `${leftPos}%`;
+                        ripple.style.bottom = '20px';
+                        rainContainer.appendChild(ripple);
+                        
+                        // Remove ripple after animation
+                        setTimeout(() => {
+                            if (document.body.contains(ripple)) {
+                                rainContainer.removeChild(ripple);
+                            }
+                        }, 2000);
+                    }
+                }, duration * 1000);
+                
+                // Remove drop after animation
+                setTimeout(() => {
+                    if (document.body.contains(drop)) {
+                        rainContainer.removeChild(drop);
+                    }
+                    createDrop(); // Create a new drop to replace
+                }, (delay + duration) * 1000);
+            }
+        }
+        
+        // Create a single new drop
+        function createDrop() {
+            const rainContainer = document.getElementById('latte-rain');
+            const drop = document.createElement('div');
+            drop.classList.add('latte-drop');
+            
+            const leftPos = Math.random() * 100;
+            const duration = Math.random() * 1 + 1;
+            
+            drop.style.left = `${leftPos}%`;
+            drop.style.animationDuration = `${duration}s`;
+            
+            rainContainer.appendChild(drop);
+            
+            // Create ripple
+            setTimeout(() => {
+                if (document.body.contains(drop)) {
+                    const ripple = document.createElement('div');
+                    ripple.classList.add('latte-ripple');
+                    ripple.style.left = `${leftPos}%`;
+                    ripple.style.bottom = '20px';
+                    rainContainer.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(ripple)) {
+                            rainContainer.removeChild(ripple);
+                        }
+                    }, 2000);
+                }
+            }, duration * 1000);
+            
+            // Remove drop after animation
+            setTimeout(() => {
+                if (document.body.contains(drop)) {
+                    rainContainer.removeChild(drop);
+                }
+                createDrop(); // Create another drop
+            }, duration * 1000);
+        }
+        
+        // Create cream swirls
+        function createCreamSwirls() {
+            const rainContainer = document.getElementById('latte-rain');
+            const numberOfSwirls = 20;
+            
+            for (let i = 0; i < numberOfSwirls; i++) {
+                setTimeout(() => {
+                    const swirl = document.createElement('div');
+                    swirl.classList.add('cream-swirl');
+                    
+                    // Random positions, sizes and speeds
+                    const leftPos = Math.random() * 100;
+                    const size = Math.random() * 30 + 15; // 15-45px
+                    const duration = Math.random() * 5 + 10; // 10-15 seconds
+                    const rotation = Math.random() * 45; // 0-45 degrees
+                    
+                    swirl.style.left = `${leftPos}%`;
+                    swirl.style.width = `${size}px`;
+                    swirl.style.height = `${size}px`;
+                    swirl.style.animationDuration = `${duration}s`;
+                    swirl.style.transform = `rotate(${rotation}deg)`;
+                    
+                    rainContainer.appendChild(swirl);
+                    
+                    // Remove cream swirl after animation
+                    setTimeout(() => {
+                        if (document.body.contains(swirl)) {
+                            rainContainer.removeChild(swirl);
+                        }
+                        // Create a new cream swirl to replace
+                        createSingleCreamSwirl();
+                    }, duration * 1000);
+                }, i * 500); // Stagger cream swirl creation
+            }
+        }
+        
+        function createSingleCreamSwirl() {
+            const rainContainer = document.getElementById('latte-rain');
+            const swirl = document.createElement('div');
+            swirl.classList.add('cream-swirl');
+            
+            const leftPos = Math.random() * 100;
+            const size = Math.random() * 30 + 15;
+            const duration = Math.random() * 5 + 10;
+            const rotation = Math.random() * 45;
+            
+            swirl.style.left = `${leftPos}%`;
+            swirl.style.width = `${size}px`;
+            swirl.style.height = `${size}px`;
+            swirl.style.animationDuration = `${duration}s`;
+            swirl.style.transform = `rotate(${rotation}deg)`;
+            
+            rainContainer.appendChild(swirl);
+            
+            setTimeout(() => {
+                if (document.body.contains(swirl)) {
+                    rainContainer.removeChild(swirl);
+                }
+                createSingleCreamSwirl();
+            }, duration * 1000);
+        }
+        
+        // Create bubbles
+        function createBubbles() {
+            const rainContainer = document.getElementById('latte-rain');
+            const numberOfBubbles = 30;
+            
+            for (let i = 0; i < numberOfBubbles; i++) {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.classList.add('bubble');
+                    
+                    // Random positions, sizes and speeds
+                    const leftPos = Math.random() * 100;
+                    const size = Math.random() * 20 + 5;
+                    const duration = Math.random() * 10 + 15; // 15-25 seconds
+                    
+                    bubble.style.left = `${leftPos}%`;
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    bubble.style.animationDuration = `${duration}s`;
+                    
+                    rainContainer.appendChild(bubble);
+                    
+                    // Remove bubble after animation
+                    setTimeout(() => {
+                        if (document.body.contains(bubble)) {
+                            rainContainer.removeChild(bubble);
+                        }
+                        // Create a new bubble to replace
+                        createSingleBubble();
+                    }, duration * 1000);
+                }, i * 300); // Stagger bubble creation
+            }
+        }
+        
+        function createSingleBubble() {
+            const rainContainer = document.getElementById('latte-rain');
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            
+            const leftPos = Math.random() * 100;
+            const size = Math.random() * 20 + 5;
+            const duration = Math.random() * 10 + 15;
+            
+            bubble.style.left = `${leftPos}%`;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.animationDuration = `${duration}s`;
+            
+            rainContainer.appendChild(bubble);
+            
+            setTimeout(() => {
+                if (document.body.contains(bubble)) {
+                    rainContainer.removeChild(bubble);
+                }
+                createSingleBubble();
+            }, duration * 1000);
+        }
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            createLatteRain();
+            createCreamSwirls();
+            createBubbles();
+        });
+    </script>
+</body>
+</html>
